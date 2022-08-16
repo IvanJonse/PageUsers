@@ -5,20 +5,24 @@ const instance = axios.create({
 })
 
 
+
 export const usersPagesApi = {
 
-    getUsers (page, per_page, total, total_pages) {
-       return instance.get(`users?page=${page}&per_page=${per_page}&total=${total}&total_pages=${total_pages}/` )
+    getUsers (page, per_page) {
+       return instance.get(`users?page=${page}&per_page=${per_page}/` )
     },
 
-    getCurrentUser (userId) {
-       return instance.get(`users/2`)
-    },
 
     deleteUsers (userId) {
        return instance.delete(`users/${userId}`)
-    }
+    },
 
+    updateUser (userId, data) {
+      
+      return instance.put(`users/${userId}`, {data})
+   },
+   
 
 }
+
 

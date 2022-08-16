@@ -1,9 +1,12 @@
 import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux'
 import thunkMiddleware  from 'redux-thunk'
 import usersReducer from './usersReducer'
+import { reducer as formRedux } from 'redux-form'
 
 let reducers = combineReducers({
-  userPage: usersReducer
+  userPage: usersReducer,
+  form: formRedux
+
 })
 
 
