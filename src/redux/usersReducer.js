@@ -58,12 +58,16 @@ const usersReducer = (state = initialState, action) => {
 
         case UPDATE_USERS_SUCCES: {
            
-                                  
-                let data = { ...state.users, data:  [action.payloadSucces.data, ...state.users.data.filter(e => e.id !== action.payloadSucces.id)] } 
-                           
-                return {
-                    ...state, users: data
-                }
+            let data = { 
+
+                ...state.users, 
+
+                data:   [action.payloadSucces.data, ...state.users.data.filter(e => e.id !== action.payloadSucces.id)]
+                        .sort((prev, next) => prev.id - next.id)}
+            
+            return {
+                ...state, users: data
+            }
         }
 
     
@@ -132,7 +136,7 @@ export const updateUser = (id, data) => {
    let res = await usersPagesApi.updateUser(id, data)
 
         dispatch(updateCurrentUser(id, data)) 
-        
+
         console.log(getState())
     }
 }
