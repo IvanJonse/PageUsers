@@ -2,13 +2,15 @@ import React, {useEffect} from 'react'
 import { connect } from 'react-redux'
 import { getUsers, setCurrentPage, deleteUsersItems, updateUser } from '../../redux/usersReducer'
 import ManyPage from './ManyPage'
+import Preloader from '../Preloader/Preloader'
+
 
 function ManyPageContainer(props) {
-  
+   
 useEffect(()=> {
 
   let {currentPage, pageSize} = props
-  props.getUsers(currentPage, pageSize)
+ props.getUsers(currentPage, pageSize, '')
 
 }, [])
 
@@ -16,36 +18,33 @@ useEffect(()=> {
 let onPageChanged = (pageNumber) => {
     props.setCurrentPage(pageNumber)
     let {pageSize} = props
-    props.getUsers(pageNumber, pageSize)
+    props.getUsers(pageNumber, pageSize, '')
 }
 
     return (
       <>
-        {
-
+        {   !props.isFetching ?
           <ManyPage 
+            isFetching={props.isFetching}
             users={props.users} 
             updateUser={props.updateUser}
             currentPage={props.currentPage}
             onPageChanged={onPageChanged} 
             pageSum={props.pageSum}
-            getCurrentUser={props.getCurrentUser}
             deleteUsersItems={props.deleteUsersItems}
-            dataInput={props.dataInput}
-          />
+          />  : <Preloader/>
         }
       </>
       
     )
 }
 
-
 let mapStateToProps = (state) => ({
     users: state.userPage.users,
-    pageSize: state.userPage.users.per_page,
-    pageSum: state.userPage.users.total_pages,
-    currentPage: state.userPage.users.page,
-    dataInput: state.userPage.dataInput,
+    pageSize: state.userPage.per_page,
+    pageSum: state.userPage.total_pages,
+    currentPage: state.userPage.page,
+    isFetching: state.userPage.isFetching,
 })
 
-export default connect(mapStateToProps, {getUsers, setCurrentPage, deleteUsersItems, updateUser})(ManyPageContainer)
+export default  connect(mapStateToProps, {getUsers, setCurrentPage, deleteUsersItems, updateUser})(ManyPageContainer)

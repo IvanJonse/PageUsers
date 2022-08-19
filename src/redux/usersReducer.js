@@ -1,9 +1,6 @@
 import { usersPagesApi } from "../API/API";
-import { stopSubmit } from 'redux-form';
 
 const SET_USERS = 'SET_USERS'
-
-const SET_CURRENT_USERS = 'SET_CURRENT_USERS'
 
 const SET_TOTAL_ITEMS_COUNT = 'SET_TOTAL_ITEMS_COUNT'
 
@@ -13,16 +10,26 @@ const DELETE_USERS = 'DELETE_USERS'
 
 const UPDATE_USERS_SUCCES = 'UPDATE_USERS_SUCCES'
 
+const TOGGLE_IS_FETCHING = 'LOADER'
+
+const SET_FNAME = 'SET_FNAME' 
 
 const initialState = {
 
     users: [],
-
-    page: 1,
     
     clear: '',
 
-    
+    page: 1,
+
+    per_page: 6,
+
+    total: 12,
+
+    total_pages: 2,
+
+    isFetching: true
+
 }
 
 const usersReducer = (state = initialState, action) => {
@@ -36,6 +43,7 @@ const usersReducer = (state = initialState, action) => {
             return {
                ...state, users: action.data
             }
+
         }
 
         case SET_TOTAL_ITEMS_COUNT: {
@@ -47,6 +55,16 @@ const usersReducer = (state = initialState, action) => {
                 ...state, page: action.currentPage
             }
         }
+
+        case SET_FNAME: {
+          
+            return {
+
+                ...state, first_name: action.filter
+            }
+            
+        }
+
         
         case DELETE_USERS:  {
 
@@ -70,6 +88,12 @@ const usersReducer = (state = initialState, action) => {
             }
         }
 
+        
+        case TOGGLE_IS_FETCHING: {
+            return {
+                ...state, isFetching: action.isFetching
+            }
+        }
     
         default:
 
@@ -81,38 +105,40 @@ const setUsers = (data) => ({
     type: SET_USERS, data
 })
 
-
 export const setTotalUsersCount = (count) => ({
     type: SET_TOTAL_ITEMS_COUNT, count
 })
-
 
 export const setCurrentPage = (currentPage) => ({
     type: SET_CURRENTPAGE, currentPage
  })
 
-
 export const deleteUsers = (payload) => ({
     type: DELETE_USERS, payload
  })
-
 
 export const updateCurrentUser = (id, data) => ({
     type: UPDATE_USERS_SUCCES, payloadSucces:{id, data}
  })
 
+ export const toggleIsFetching = (isFetching) => ({
+    type: TOGGLE_IS_FETCHING, isFetching
+})
 
-export const getUsers = (page, per_page, total, total_pages) => { 
+export const getUsers =  (page, per_page) => { 
   
     return async (dispatch) => {
+
+        dispatch (toggleIsFetching(true))
+
+        dispatch (setCurrentPage (page)) 
        
-        dispatch (setCurrentPage (page))
-
-        let response = await usersPagesApi.getUsers(page, per_page, total, total_pages)
-
+        let response = await usersPagesApi.getUsers(page, per_page) 
+      
+        dispatch (toggleIsFetching(false))
+        
         dispatch(setUsers(response.data))
 
-        dispatch (setTotalUsersCount (response.total))
     }
 }
 
@@ -130,14 +156,12 @@ export const deleteUsersItems = (userId) => {
 
 export const updateUser = (id, data) => { 
    
-    return async (dispatch, getState) => {
-        console.log(getState())
-
-   let res = await usersPagesApi.updateUser(id, data)
+    return async (dispatch) => {
+     
+        await usersPagesApi.updateUser(id, data)
 
         dispatch(updateCurrentUser(id, data)) 
 
-        console.log(getState())
     }
 }
 

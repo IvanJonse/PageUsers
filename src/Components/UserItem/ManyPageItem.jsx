@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {AiOutlineEdit} from 'react-icons/ai'
 import {VscClose} from 'react-icons/vsc'
 import Modal from 'react-bootstrap/Modal';
-import ProfileReduxform from './ProfileFormItem';
+import ProfileForm from './ProfileFormItem';
+import { reduxForm } from "redux-form";
 
 export default function ManyPageItem(props) {
 
@@ -31,20 +32,24 @@ export default function ManyPageItem(props) {
               <button onClick={()=> props.deleteUsersItems(props.data.id) } className='border border-info'><VscClose/></button>
             </td>
           </tr>
-
+          
           <Modal show={show} onHide={handleClose} className='mx-5'>
               <Modal.Header closeButton>
                 <Modal.Title>Modal heading</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <img className='d-flex justify-content-center m-auto' src={`https://reqres.in/img/faces/${props.id}-image.jpg`} alt="" />
-                <ProfileReduxform  onSubmit={onSubmit} data={props.users.data} initialValues={props.data} />
+                <img className='d-flex justify-content-center m-auto' src={props.avatar} alt="" />
+                <ProfileReduxform onSubmit={onSubmit} data={props.users.data} initialValues={props.data} />
               </Modal.Body>
           </Modal>
 
         </>
       )
 }
+
+const ProfileReduxform = reduxForm ({
+  form: 'FormEditContact', enableReinitialize : true, destroyOnUnmount: false 
+}) (ProfileForm)
 
 
 

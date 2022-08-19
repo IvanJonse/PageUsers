@@ -1,12 +1,18 @@
 import React, {useState} from 'react'
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, FormControl } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import ManyPageItem from '../UserItem/ManyPageItem';
 import Paginator from './Paginator';
+import Preloader from '../Preloader/Preloader'
+import Select from 'react-select'
 
 export default function ManyPage(props) {
   
-    return (
+ const [fName, setFname] = useState('')
+ const [LName, setLname] = useState('')
+ const [Email, setEmail] = useState('')
+
+ return (
      <>
         <Container className='mt-1'>
           <Row>
@@ -16,7 +22,7 @@ export default function ManyPage(props) {
                   currentPage={props.currentPage}
                   pageSum={props.pageSum}
                 />
-              
+    
                   <Table striped bordered hover>
                     <thead>
                       <tr>
@@ -25,13 +31,39 @@ export default function ManyPage(props) {
                         <th>Last Name</th>
                         <th>Email</th>
                         <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
 
+                      </tr>
+
+                      <tr>
+
+                        <th></th>
+
+                        <th><FormControl className='border-info' placeholder='Search by first name...' onChange={(e)=> setFname(e.target.value)} type="text" /></th>
+
+                        <th><FormControl className='border-info' placeholder='Search by last name...' onChange={(e)=> setLname(e.target.value)} type="text" /></th>
+
+                        <th><FormControl className='border-info' placeholder='Search by email...' onChange={(e)=> setEmail(e.target.value)} type="email" /></th>
+
+                      </tr>
+                     
+                    </thead>
+                    
+                    <tbody>
+                
                     { 
-                        props.users.data &&
-                        props.users.data.map((d, i) => 
+                        !props.isFetching ?
+
+                         props.users.data.filter((val) => {
+            
+                          if (fName == '' && LName == '' && Email == '') return val
+                         
+                             else if (
+                              val.first_name.toLowerCase().includes(fName.toLowerCase()) 
+                              && val.last_name.toLowerCase().includes(LName.toLowerCase())
+                              && val.email.toLowerCase().includes(Email.toLowerCase())
+                               ) return val
+
+                          }).map((d, i) => 
                         
                           <ManyPageItem 
                             users={props.users}
@@ -46,15 +78,18 @@ export default function ManyPage(props) {
                             avatar={d.avatar}
                           />
                         )
-                    } 
 
+                        : <Preloader/>
+                         
+                    }
+                            
                   </tbody>
                 </Table>
             </Col>
           </Row>
         </Container>
         <>
-       
+      
         </>
       </>
     )
