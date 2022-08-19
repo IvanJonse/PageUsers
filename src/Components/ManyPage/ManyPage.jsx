@@ -4,7 +4,6 @@ import Table from 'react-bootstrap/Table';
 import ManyPageItem from '../UserItem/ManyPageItem';
 import Paginator from './Paginator';
 import Preloader from '../Preloader/Preloader'
-import Select from 'react-select'
 
 export default function ManyPage(props) {
   
